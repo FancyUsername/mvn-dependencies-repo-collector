@@ -21,9 +21,9 @@ def run(target_repo = "repo"):
     print("mvn dependency:tree ...")
     deps = subprocess.Popen(["mvn", "dependency:tree"], stdout=subprocess.PIPE).communicate()[0].decode('unicode_escape')
     deps = set([match.group(1) for match in re.finditer(r"\[INFO\][ |+-\\]+(.*):compile", deps)])
-    for i, dep in enumerate(deps):
+    for dep in deps:
         groupId, artifact, packaging, version = dep.split(':')
-        rel_path = os.path.join(groupId.replace('.', '/'), artifact, version)
+        rel_path = os.path.join(groupId.replace('.', os.sep), artifact, version)
         target_path = os.path.join(target_repo, rel_path)
         os.makedirs(target_path, exist_ok=True)
         src_path = os.path.join(Path.home(), ".m2", "repository", rel_path )
